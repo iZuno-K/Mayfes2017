@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>Mic Analyser Test</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="css/styles.css">
+<body>
+  <button onclick="toggleLiveInput()">use live input</button>
+  <br/>
+  <table>
+    <tr>
+      <td>Analyze mode:</td>
+      <td><select id="mode" onchange="setParameter()"><option>Frequency</option><option>TimeDomain</option>
+      </select></td>
+      <tr><td>SmoothingTimeConstant : </td><td><input type="text" id="smoothing" value="0.9" onchange="setParameter()"/></td></tr>
+      <tr><td>MinDecibels : </td><td><input type="text" id="min" onchange="setParameter()"/></td></tr>
+      <tr><td>MaxDecibels : </td><td><input type="text" id="max" onchange="setParameter()"/></td></tr>
+    </tr>
+  </table>
+  <br/>
+  <a href="mayfes2.html">LINK TEST</a>
+  <hr/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.min.js"></script>
+  <script type="text/javascript" src="js/mayfes2.js"></script>
+</body>
+</html>
