@@ -69,6 +69,7 @@ var plane = new THREE.Mesh(geometry, material);
 plane.castShadow = true;
 plane.receiveShadow = true;
 plane.rotation.x = Math.PI / -2;
+
 scene.add(plane);
 renderer.render(scene, camera);
 console.log(plane.geometry.vertices);
@@ -134,10 +135,6 @@ function toggleLiveInput() {
 
 function DrawGraph() {
   plane.geometry.verticesNeedUpdate = true;
-  plane.geometry.computeFaceNormals();
-  plane.geometry.computeVertexNormals();
-  plane.castShadow = true;
-  plane.receiveShadow = true;
 
   var offset = 128;
   var tuning = 200.0;
