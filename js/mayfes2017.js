@@ -2,17 +2,24 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 var container, stats;
 
-var views, scene, renderer;
+//scene is used to off-screne-rendering
+var views, scene, renderer, mainScene, mainCamera;
+var near = 1;
+var far  = 75;
 
-var mesh, group1, group2, group3, light;
+var light, mainLight;
 
 var windowWidth, windowHeight;
+
+//lenght is 4  in this program(front, right, back and left view)
+var renderTarget = [];
+var planeMat = [];
 
 //Web Audio API
 var audioContext = null;
 var analyser = null;
 var mediaStreamSource = null;
-var mode = 0;
+var mode = 1;
 var fftSize = 2048;
 
 //rendering
@@ -20,48 +27,33 @@ var geometry, plane;
 var material = new THREE.MeshBasicMaterial({
   color: 0x00b2ff
 });
+var attachTextureGeometry = [];
+var mainMeshes = [];
+var testGeometry, testMaterial, testMesh;
+
+
 var x_division, y_division;
 
 var views = [
 	{
-		left: 0,
-		bottom: 0.333,
-		width: 0.333,
-		height: 0.333,
-		background: new THREE.Color().setRGB( 0.0, 0.0, 0.0 ),
-		eye: [ -50, 50, 0 ],
-		up: [ 0, 1, 0 ],
-		fov: 45,					
-	},
-	{
-		left: 0.333,
-		bottom: 0.666,
-		width: 0.333,
-		height: 0.333,
-		background: new THREE.Color().setRGB( 0.0, 0.0, 0.0 ),
-		eye: [ 0, 50, -50 ],
-		up: [ 0, 1, 0 ],
-		fov: 45,
-	},
-	{
-		left: 0.666,
-		bottom: 0.333,
-		width: 0.333,
-		height: 0.333,
-		background: new THREE.Color().setRGB( 0.0, 0.0, 0.0 ),
-		eye: [ 50, 50, 0 ],
-		up: [ 0, 1, 0 ],
-		fov: 45,
-	},
-	{
-		left: 0.333,
-		bottom: 0.0,
-		width: 0.333,
-		height: 0.333,
-		background: new THREE.Color().setRGB( 0.0, 0.0, 0.0 ),
 		eye: [ 0, 50, 50 ],
 		up: [ 0, 1, 0 ],
-		fov: 45,					
+		fov: 60,					
+	},
+	{
+		eye: [ 50, 50, 0 ],
+		up: [ 0, 1, 0 ],
+		fov: 60,
+	},
+	{
+		eye: [ 0, 50, -50 ],
+		up: [ 0, 1, 0 ],
+		fov: 60,
+	},
+	{
+		eye: [ -50, 50, 0 ],
+		up: [ 0, 1, 0 ],
+		fov: 60,					
 	}
 ];
 
@@ -78,21 +70,27 @@ function init() {
 
 	container = document.getElementById( 'container' );
 
+	var size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
+	windowWidth  = size;
+	windowHeight = size;
+
+	scene = new THREE.Scene();
+
 	for (var ii =  0; ii < views.length; ++ii ) {
 
 		var view = views[ii];
-		camera = new THREE.PerspectiveCamera( view.fov, window.innerWidth / window.innerHeight, 1, 10000 );
+		camera = new THREE.PerspectiveCamera( view.fov, windowWidth / windowHeight, 1, 100);
 		camera.position.x = view.eye[ 0 ];
 		camera.position.y = view.eye[ 1 ];
 		camera.position.z = view.eye[ 2 ];
 		camera.up.x = view.up[ 0 ];
 		camera.up.y = view.up[ 1 ];
 		camera.up.z = view.up[ 2 ];
+		camera.aspect = windowWidth / windowHeight;
+		camera.lookAt(scene.position);
 		view.camera = camera;
 	}
 
-	scene = new THREE.Scene();
-	
 	light = new THREE.DirectionalLight( 0xffffff, 1 );
 	light.position.set( 20, 40, 15 );
 	light.target.position.copy( scene.position );
@@ -107,9 +105,17 @@ function init() {
 	light.shadowMapWidth = light.shadowMapHeight = 2048;
 	light.shadowDarkness = .7;
 	scene.add(light);
+	console.log(light.target.position);
+	
+	renderer = new THREE.WebGLRenderer( { antialias: true } );
+	// renderer = new THREE.WebGLRenderer();
+	renderer.shadowMapEnabled = true;
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize ( windowWidth, windowHeight );
+	container.appendChild( renderer.domElement );
 	
 
-	x_division = 25;
+	x_division = 12;
 	y_division = 12;
 	geometry = new THREE.PlaneGeometry(50, 50, x_division, y_division);
 	geometry.computeFaceNormals();
@@ -120,22 +126,72 @@ function init() {
 	plane.receiveShadow = true;
 	plane.rotation.x = Math.PI / -2;
 	scene.add(plane);
-	
-
-	var size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
-	windowWidth  = size;
-	windowHeight = size;
-	// renderer = new THREE.WebGLRenderer( { antialias: true } );
-	renderer = new THREE.WebGLRenderer();
-	renderer.shadowMapEnabled = true;
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setSize ( windowWidth, windowHeight );
-	container.appendChild( renderer.domElement );
-	// document.body.appendChild(renderer.domElement);
 
 	stats = new Stats();
 	container.appendChild( stats.dom );
-	// document.body.appendChild(stats.dom);	
+
+	for (var i = 0; i < views.length; i++) {
+		renderTarget[i] = new THREE.WebGLRenderTarget(windowWidth / 3, windowHeight / 3, {
+			 magFilter: THREE.NearestFilter,
+			 minFilter: THREE.NearestFilter,
+			 wrapS: THREE.ClampToEdgeWrapping,
+			 wrapT: THREE.ClampToEdgeWrapping
+		});
+
+		planeMat[i] = new THREE.MeshLambertMaterial({
+		    color: 0xffffff,
+		    map: renderTarget[i],
+		    side: THREE.DoubleSide
+		});
+
+		attachTextureGeometry[i] = new THREE.PlaneGeometry(50, 50, 1, 1);
+
+		mainMeshes[i] = new THREE.Mesh(attachTextureGeometry[i], planeMat[i]);
+	}
+	console.log(renderTarget);
+	
+
+
+	mainScene = new THREE.Scene();
+
+	mainCamera = new THREE.PerspectiveCamera(90, windowWidth / windowHeight, near, far+1);
+	mainCamera.position.set(0, far, 0);
+	mainCamera.up.x = 0;
+	mainCamera.up.y = 0;
+	mainCamera.up.z = -1;
+	mainCamera.lookAt(mainScene.position);
+	// camera.lookAt(mainScene.position);
+
+	mainMeshes[0].position.set(0, 0, 50);
+	mainMeshes[1].position.set(50, 0, 0);
+	mainMeshes[2].position.set(0, 0, -50);
+	mainMeshes[3].position.set(-50, 0, 0);
+
+
+	for (var i = 0; i < views.length; i++) {
+		
+		mainMeshes[i].rotation.x = Math.PI / -2;
+		mainScene.add(mainMeshes[i]);
+	}
+
+	mainMeshes[1].rotation.z = Math.PI / 2;
+	mainMeshes[2].rotation.z = Math.PI;
+	mainMeshes[3].rotation.z = Math.PI / -2;
+
+	
+	mainLight = new THREE.DirectionalLight( 0xffffff);
+	mainLight.position.set( 0, 50, 0);
+	mainLight.target.position.copy( mainScene.position );
+
+	mainScene.add(mainLight);
+
+	testGeometry = new THREE.CubeGeometry( 30, 30, 30 );
+	testMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+	testMesh = new THREE.Mesh( testGeometry, testMaterial );
+	testMesh.position.set(0, 0, 0);
+	mainScene.add(testMesh);
+	renderer.render(mainScene, mainCamera);
+
 }
 
 function animate() {
@@ -143,6 +199,7 @@ function animate() {
 	updatePlane();
 
 	render();
+	renderer.render(mainScene, mainCamera);
 	stats.update();
 
 	requestAnimationFrame( animate );
@@ -150,28 +207,18 @@ function animate() {
 
 function render() {
 
-	console.log(windowWidth+","+windowHeight);
+	// console.log(windowWidth+","+windowHeight);
 
 	for ( var ii = 0; ii < views.length; ++ii ) {
 
 		view = views[ii];
 		camera = view.camera;
+		mainMeshes[ii].material.needsUpdate = true;
 
-		camera.lookAt( scene.position );
+		// renderer.setClearColor( view.background );
+		// camera.updateProjectionMatrix();
 
-		var left   = Math.floor( windowWidth  * view.left );
-		var bottom = Math.floor( windowHeight * view.bottom );
-		var width  = Math.floor( windowWidth  * view.width );
-		var height = Math.floor( windowHeight * view.height );
-		renderer.setViewport( left, bottom, width, height );
-		renderer.setScissor( left, bottom, width, height );
-		renderer.setScissorTest( true );
-		renderer.setClearColor( view.background );
-
-		camera.aspect = width / height;
-		camera.updateProjectionMatrix();
-
-		renderer.render( scene, camera );
+		renderer.render( scene, camera, renderTarget[ii] );
 		
 	}
 
@@ -228,29 +275,29 @@ function toggleLiveInput() {
 
 
 function updatePlane() {
-  plane.geometry.verticesNeedUpdate = true;
+	plane.geometry.verticesNeedUpdate = true;
 	geometry.computeFaceNormals();
 	geometry.computeVertexNormals();
 	plane.castShadow = true;
 	plane.receiveShadow = true;
-  var offset = 128;
+   var offset = 128;
 
-  var bufferLength = analyser.frequencyBinCount;
-  var data = new Uint8Array(bufferLength);
+   var bufferLength = analyser.frequencyBinCount;
+   var data = new Uint8Array(bufferLength);
   
-  if (mode == 0) analyser.getByteFrequencyData(data);
-  else analyser.getByteTimeDomainData(data); //Waveform Data
+   if (mode == 0) analyser.getByteFrequencyData(data);
+   else analyser.getByteTimeDomainData(data); //Waveform Data
 
-  for (var i = plane.geometry.vertices.length - 1; i > x_division; i--) {
-    plane.geometry.vertices[i].z = plane.geometry.vertices[i - x_division - 1].z;
-    console.log(plane.geometry.vertices[i - x_division - 1].z);
-  }
+   for (var i = plane.geometry.vertices.length - 1; i > x_division; i--) {
+     plane.geometry.vertices[i].z = plane.geometry.vertices[i - x_division - 1].z;
+     // console.log(plane.geometry.vertices[i - x_division - 1].z);
+   }
 
-  var interval = Math.floor(data.length / x_division);
+   var interval = Math.floor(data.length / x_division);
   
-  for (var i = 0; i < x_division + 1; i++) {
-    plane.geometry.vertices[i].z = data[i*interval] - offset;
-  }
+   for (var i = 0; i < x_division + 1; i++) {
+     plane.geometry.vertices[i].z = data[i*interval] - offset;
+   }
 
   
 }

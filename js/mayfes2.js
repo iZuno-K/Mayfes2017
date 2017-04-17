@@ -53,7 +53,7 @@ camera.position.set(0,50,50);
 camera.lookAt(scene.position);
 
 renderer = new THREE.WebGLRenderer();
-renderer.shadowMapEnabled = true
+renderer.shadowMapEnabled = true;
 renderer.setSize(size, size);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
