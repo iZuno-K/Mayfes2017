@@ -33,25 +33,27 @@ var testGeometry, testMaterial, testMesh;
 
 
 var x_division, y_division;
+var cmaeraDistance_y = 45;
+var cmaeraDistance_xz = 15;
 
 var views = [
 	{
-		eye: [ 0, 50, 50 ],
+		eye: [ 0, cmaeraDistance_y, cmaeraDistance_xz ],
 		up: [ 0, 1, 0 ],
 		fov: 60,					
 	},
 	{
-		eye: [ 50, 50, 0 ],
+		eye: [ cmaeraDistance_xz, cmaeraDistance_y, 0 ],
 		up: [ 0, 1, 0 ],
 		fov: 60,
 	},
 	{
-		eye: [ 0, 50, -50 ],
+		eye: [ 0, cmaeraDistance_y, -cmaeraDistance_xz ],
 		up: [ 0, 1, 0 ],
 		fov: 60,
 	},
 	{
-		eye: [ -50, 50, 0 ],
+		eye: [ -cmaeraDistance_xz, cmaeraDistance_y, 0 ],
 		up: [ 0, 1, 0 ],
 		fov: 60,					
 	}
@@ -105,7 +107,6 @@ function init() {
 	light.shadowMapWidth = light.shadowMapHeight = 2048;
 	light.shadowDarkness = .7;
 	scene.add(light);
-	console.log(light.target.position);
 	
 	renderer = new THREE.WebGLRenderer( { antialias: true } );
 	// renderer = new THREE.WebGLRenderer();
@@ -148,7 +149,6 @@ function init() {
 
 		mainMeshes[i] = new THREE.Mesh(attachTextureGeometry[i], planeMat[i]);
 	}
-	console.log(renderTarget);
 	
 
 
@@ -185,12 +185,12 @@ function init() {
 
 	mainScene.add(mainLight);
 
-	testGeometry = new THREE.CubeGeometry( 30, 30, 30 );
-	testMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
-	testMesh = new THREE.Mesh( testGeometry, testMaterial );
-	testMesh.position.set(0, 0, 0);
-	mainScene.add(testMesh);
-	renderer.render(mainScene, mainCamera);
+	// testGeometry = new THREE.CubeGeometry( 30, 30, 30 );
+	// testMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+	// testMesh = new THREE.Mesh( testGeometry, testMaterial );
+	// testMesh.position.set(0, 0, 0);
+	// mainScene.add(testMesh);
+	// renderer.render(mainScene, mainCamera);
 
 }
 
@@ -206,8 +206,6 @@ function animate() {
 }
 
 function render() {
-
-	// console.log(windowWidth+","+windowHeight);
 
 	for ( var ii = 0; ii < views.length; ++ii ) {
 
@@ -281,6 +279,7 @@ function updatePlane() {
 	plane.castShadow = true;
 	plane.receiveShadow = true;
    var offset = 128;
+   var tuning = 10.0;
 
    var bufferLength = analyser.frequencyBinCount;
    var data = new Uint8Array(bufferLength);
@@ -288,16 +287,19 @@ function updatePlane() {
    if (mode == 0) analyser.getByteFrequencyData(data);
    else analyser.getByteTimeDomainData(data); //Waveform Data
 
+   //move data forward
    for (var i = plane.geometry.vertices.length - 1; i > x_division; i--) {
      plane.geometry.vertices[i].z = plane.geometry.vertices[i - x_division - 1].z;
-     // console.log(plane.geometry.vertices[i - x_division - 1].z);
    }
 
    var interval = Math.floor(data.length / x_division);
   
+  //get data from microphon input
    for (var i = 0; i < x_division + 1; i++) {
      plane.geometry.vertices[i].z = data[i*interval] - offset;
+     if (plane.geometry.vertices[i].z > 5) plane.geometry.vertices[i].z /= tuning;
    }
+   console.log(plane.geometry.vertices[0].z);
 
   
 }
