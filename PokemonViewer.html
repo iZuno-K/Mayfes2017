@@ -241,17 +241,16 @@
                 var now = new Date();
                 stats.update();
                 var fps = stats.getFps();
-                if (lastTime == 0) lastTime = now.getTime();
-                else {
-                    var nowTime = now.getTime();
-                    var past = (nowTime - lastTime) / 1000;
-                    obj.rotation.y += 60 * past;
-                    lastTime = nowTime;
-                    console.log(past);
-                }
-                // console.log(fps);
-                // if (fps != 0) obj.rotation.y += 60 / fps;
-                // obj.rotation.y = 45;
+                // if (lastTime == 0) lastTime = now.getTime();
+                // else {
+                //     var nowTime = now.getTime();
+                //     var past = (nowTime - lastTime) / 1000;
+                //     obj.rotation.y += 60 * past;
+                //     lastTime = nowThiime;
+                //     console.log(past);
+                // }
+                console.log(fps);
+                if (fps != 0) obj.rotation.y += 6 / fps;
                 console.log(obj.rotation.y);
                 obj.rotation.y %= 360;  
                 for ( var ii = 0; ii < views.length; ++ii ) {
