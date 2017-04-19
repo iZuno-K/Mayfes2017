@@ -32,6 +32,7 @@
 
             var windowHalfX = window.innerWidth / 2;
             var windowHalfY = window.innerHeight / 2;
+            var windowWidth, windowHeight;
 
             var cameraDistance_y = 5
             var cameraDistance_xz = 5;
@@ -48,22 +49,22 @@
                 {
                     eye: [ 0, cameraDistance_y, cameraDistance_xz ],
                     up: [ 0, 1, 0 ],
-                    fov: 60,                    
+                    fov: 45,                    
                 },
                 {
                     eye: [ cameraDistance_xz, cameraDistance_y, 0 ],
                     up: [ 0, 1, 0 ],
-                    fov: 60,
+                    fov: 45,
                 },
                 {
                     eye: [ 0, cameraDistance_y, -cameraDistance_xz ],
                     up: [ 0, 1, 0 ],
-                    fov: 60,
+                    fov: 45,
                 },
                 {
                     eye: [ -cameraDistance_xz, cameraDistance_y, 0 ],
                     up: [ 0, 1, 0 ],
-                    fov: 60,                    
+                    fov: 45,                    
                 }
             ];
 
@@ -148,7 +149,7 @@
 
                 renderer = new THREE.WebGLRenderer();
                 renderer.setPixelRatio( window.devicePixelRatio );
-                renderer.setSize( window.innerWidth, window.innerHeight );
+                renderer.setSize( windowWidth, windowHeight );
                 container.appendChild( renderer.domElement );
 
 
