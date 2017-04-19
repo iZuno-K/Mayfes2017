@@ -14,6 +14,7 @@ var windowWidth, windowHeight;
 //lenght is 4  in this program(front, right, back and left view)
 var renderTarget = [];
 var planeMat = [];
+var texSize = 50;
 
 //Web Audio API
 var audioContext = null;
@@ -33,8 +34,10 @@ var testGeometry, testMaterial, testMesh;
 
 
 var x_division, y_division;
-var cmaeraDistance_y = 45;
-var cmaeraDistance_xz = 15;
+// var cmaeraDistance_y = 45;
+// var cmaeraDistance_xz = 15;
+var cmaeraDistance_y = 10
+var cmaeraDistance_xz = 50;
 
 var views = [
 	{
@@ -116,9 +119,9 @@ function init() {
 	container.appendChild( renderer.domElement );
 	
 
-	x_division = 12;
-	y_division = 12;
-	geometry = new THREE.PlaneGeometry(50, 50, x_division, y_division);
+	x_division = 20;
+	y_division = 6;
+	geometry = new THREE.PlaneGeometry(texSize, texSize, x_division, y_division);
 	geometry.computeFaceNormals();
 	geometry.computeVertexNormals();
 
@@ -145,17 +148,16 @@ function init() {
 		    side: THREE.DoubleSide
 		});
 
-		attachTextureGeometry[i] = new THREE.PlaneGeometry(50, 50, 1, 1);
+		attachTextureGeometry[i] = new THREE.PlaneGeometry(texSize, texSize, 1, 1);
 
 		mainMeshes[i] = new THREE.Mesh(attachTextureGeometry[i], planeMat[i]);
 	}
-	
-
 
 	mainScene = new THREE.Scene();
 
-	mainCamera = new THREE.PerspectiveCamera(90, windowWidth / windowHeight, near, far+1);
-	mainCamera.position.set(0, far, 0);
+	// mainCamera = new THREE.PerspectiveCamera(90, windowWidth / windowHeight, near, far+1);
+	mainCamera = new THREE.OrthographicCamera(-texSize*3/2, texSize*3/2, texSize*3/2, -texSize*3/2, 1, 2);
+	mainCamera.position.set(0, 1, 0);
 	mainCamera.up.x = 0;
 	mainCamera.up.y = 0;
 	mainCamera.up.z = -1;
@@ -279,7 +281,7 @@ function updatePlane() {
 	plane.castShadow = true;
 	plane.receiveShadow = true;
    var offset = 128;
-   var tuning = 10.0;
+   var tuning = 5.0;
 
    var bufferLength = analyser.frequencyBinCount;
    var data = new Uint8Array(bufferLength);
@@ -296,8 +298,9 @@ function updatePlane() {
   
   //get data from microphon input
    for (var i = 0; i < x_division + 1; i++) {
-     plane.geometry.vertices[i].z = data[i*interval] - offset;
-     if (plane.geometry.vertices[i].z > 5) plane.geometry.vertices[i].z /= tuning;
+     // plane.geometry.vertices[i].z = (data[i*interval] - offset) / tuning;
+     plane.geometry.vertices[i].z = (data[i*3] - offset) / tuning;
+     // if (plane.geometry.vertices[i].z > 5) plane.geometry.vertices[i].z /= tuning;
    }
    console.log(plane.geometry.vertices[0].z);
 
