@@ -171,8 +171,7 @@
 
                     planeMat[i] = new THREE.MeshLambertMaterial({
                         color: 0xffffff,
-                        map: renderTarget[i],
-                        side: THREE.DoubleSide
+                        map: renderTarget[i]                    
                     });
 
                     attachTextureGeometry[i] = new THREE.PlaneGeometry(texSize, texSize, 1, 1);
