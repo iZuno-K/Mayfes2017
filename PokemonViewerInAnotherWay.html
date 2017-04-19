@@ -21,6 +21,7 @@
 		<script src="js/loaders/DDSLoader.js"></script>
       <script src="js/loaders/MTLLoader.js"></script>
       <script src="js/loaders/OBJLoader.js"></script>
+      <script type="js/libs/stats.js"></script>
 
 		<script src="js/Detector.js"></script>
 
@@ -28,7 +29,7 @@
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
-			var container;
+			var container, stats;
 
 			var views, scene, renderer;
 			var texSize;
@@ -55,8 +56,8 @@
 					width: 0.333,
 					height: 0.333,
 					background: new THREE.Color().setRGB( 0.5, 0.7, 0.7 ),
-					eye: [ cameraDistance_xz, cameraDistance_y, 0 ],
-					up: [ 0, 0, 1 ],
+					eye: [ -cameraDistance_xz, cameraDistance_y, 0 ],
+					up: [ 0, 0, -1 ],
 					fov: 45,
 				},
 				{
@@ -65,7 +66,7 @@
 					width: 0.333,
 					height: 0.333,
 					background: new THREE.Color().setRGB( 0.7, 0.5, 0.5 ),
-					eye: [ 0, cameraDistance_y, cameraDistance_xz],
+					eye: [ 0, cameraDistance_y, -cameraDistance_xz],
 					up: [ 0, 1, 0 ],
 					fov: 45,
 				},
@@ -75,8 +76,8 @@
 					width: 0.333,
 					height: 0.333,
 					background: new THREE.Color().setRGB( 0.5, 0.5, 0.7 ),
-					eye: [ -cameraDistance_xz, cameraDistance_y, 0],
-					up: [ 0, 0, 1 ],
+					eye: [ cameraDistance_xz, cameraDistance_y, 0],
+					up: [ 0, 0, -1 ],
 					fov: 45,					
 				}
 			];
@@ -165,10 +166,15 @@
 	          // container.appendChild( renderer.domElement );
 	          container.appendChild( renderer.domElement );
 
+	          stats = new Stats();
+
 	          
 			}
 
 			function animate() {
+				stats.update();
+				var fps = stats.getFps();
+				obj.rotation.y += 2*Math.PI/30 / fps;
 
 				render();
 
@@ -190,7 +196,7 @@
 					renderer.setViewport( left, bottom, width, height );
 					renderer.setScissor( left, bottom, width, height );
 					renderer.setScissorTest( true );
-					renderer.setClearColor( view.background );
+					// renderer.setClearColor( view.background );
 
 					renderer.render( scene, camera );
 					
