@@ -67,6 +67,7 @@ window.onload = function() {
 	init();
 };
 
+
 //main function end
 //followings are functions used above
 // ---------------------------------------------------------------------------------------
@@ -132,7 +133,7 @@ function init() {
 	scene.add(plane);
 
 	stats = new Stats();
-	container.appendChild( stats.dom );
+	// container.appendChild( stats.dom );
 
 	for (var i = 0; i < views.length; i++) {
 		renderTarget[i] = new THREE.WebGLRenderTarget(windowWidth / 3, windowHeight / 3, {
@@ -203,6 +204,7 @@ function animate() {
 	render();
 	renderer.render(mainScene, mainCamera);
 	stats.update();
+	console.log(stats.getFps());
 
 	requestAnimationFrame( animate );
 }

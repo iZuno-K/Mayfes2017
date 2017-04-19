@@ -21,12 +21,15 @@
         <script src="js/loaders/DDSLoader.js"></script>
         <script src="js/loaders/MTLLoader.js"></script>
         <script src="js/loaders/OBJLoader.js"></script>
+        <script src="js/libs/stats.js"></script>
 
         <script>
 
             var container;
 
             var camera, scene, renderer, mainScene, mainCamera;
+
+            var stats;
 
             var mouseX = 0, mouseY = 0;
 
@@ -212,6 +215,8 @@
 
                 mainScene.add(mainLight);
 
+                stats = new THREE.Stats();
+
 
             }
 
@@ -233,7 +238,9 @@
             }
 
             function renderToTexture() {
-                obj.rotation.y += 0.5;
+                stats.update();
+                var fps = stats.getFps();
+                if (fps != 0) obj.rotation.y += 60 / fps;
                 obj.rotation.y %= 360;  
                 for ( var ii = 0; ii < views.length; ++ii ) {
                     view = views[ii];
