@@ -18,10 +18,11 @@
 		<div id="info"><a href="http://threejs.org" target="_blank">three.js</a> - multiple views - webgl</div>
 
 		<script src="js/libs/three.js"></script>
+		<script type="js/libs/stats.js"></script>
 		<script src="js/loaders/DDSLoader.js"></script>
       <script src="js/loaders/MTLLoader.js"></script>
       <script src="js/loaders/OBJLoader.js"></script>
-      <script type="js/libs/stats.js"></script>
+      
 
 		<script src="js/Detector.js"></script>
 
@@ -84,8 +85,12 @@
 				}
 			];
 
-			init();
-			animate();
+			window.onload() = function() {
+				init();
+				animate();
+			}
+			//main function end
+			//below are functions used above
 
 			function init() {
 
