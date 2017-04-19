@@ -42,7 +42,7 @@
             //lenght is 4  in this program(front, right, back and left view)
             var renderTarget = [];
             var planeMat = [];
-            var texSize = 25;
+            var texSize = 50;
             var attachTextureGeometry = [];
             var mainMeshes = [];
             var obj;
@@ -162,7 +162,7 @@
 
                 //setting of texxture rendering
                 for (var i = 0; i < views.length; i++) {
-                    renderTarget[i] = new THREE.WebGLRenderTarget(windowWidth / 3, windowHeight / 3, {
+                    renderTarget[i] = new THREE.WebGLRenderTarget(texSize, texSize, {
                          magFilter: THREE.NearestFilter,
                          minFilter: THREE.NearestFilter,
                          wrapS: THREE.ClampToEdgeWrapping,
