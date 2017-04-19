@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <style>
             body {
-                background-color: black;
+                /*background-color: black;*/
                 margin-left: 0;
                 padding-left: 0;
             }
@@ -76,8 +76,8 @@
 
             function init() {
 
-                container = document.createElement( 'div' );
-                document.body.appendChild( container );
+                // container = document.createElement( 'div' );
+                // document.body.appendChild( container );
 
                 //culculate the size of maximum square
                 var size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
@@ -152,7 +152,8 @@
                 renderer = new THREE.WebGLRenderer();
                 renderer.setPixelRatio( window.devicePixelRatio );
                 renderer.setSize( windowWidth, windowHeight );
-                container.appendChild( renderer.domElement );
+                // container.appendChild( renderer.domElement );
+                document.body.appendChild( renderer.domElement );
 
 
                 //ivent listener
