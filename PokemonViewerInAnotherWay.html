@@ -32,7 +32,6 @@
 
 			var views, scene, renderer, finalScene;
 			var renderTarget, planeMat, attachTextureGeometry, mainMesh;
-
 			var windowWidth, windowHeight;
 
 			var cameraDistance_y = 4;
@@ -108,6 +107,7 @@
 					camera.aspect = windowWidth / windowHeight;
 					camera.lookAt(cameraLookPos);
 					view.camera = camera;
+
 				}
 
 				
@@ -163,6 +163,22 @@
 	          // container.appendChild( renderer.domElement );
 	          container.appendChild( renderer.domElement );
 
+	          //renderTarget
+	           renderTarget = new THREE.WebGLRenderTarget(windowWidth / 3, windowHeight / 3, {
+                         magFilter: THREE.NearestFilter,
+                         minFilter: THREE.NearestFilter,
+                         wrapS: THREE.ClampToEdgeWrapping,
+                         wrapT: THREE.ClampToEdgeWrapping
+                    });
+
+              planeMat = new THREE.MeshLambertMaterial({
+                  color: 0xffffff,
+                  map: renderTarget
+              });
+
+              attachTextureGeometry = new THREE.PlaneGeometry(texSize, texSize, 1, 1);
+
+              mainMeshes = new THREE.Mesh(attachTextureGeometry, planeMat);	           
 			}
 
 			function animate() {
