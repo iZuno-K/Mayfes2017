@@ -30,7 +30,7 @@
 
 			var container, stats;
 
-			var views, scene, renderer, finalScene;
+			var views, scene, renderer, finalScene, finalCamera;
 			var renderTarget, planeMat, attachTextureGeometry, mainMesh;
 			var windowWidth, windowHeight;
 
@@ -40,24 +40,14 @@
 
 			var views = [
 				{
-					left: 0,
-					bottom: 0.333,
+					left: 0.333,
+					bottom: 0.0,
 					width: 0.333,
 					height: 0.333,
 					background: new THREE.Color().setRGB( 0.5, 0.5, 0.7 ),
-					eye: [ -cameraDistance_xz, cameraDistance_y, 0],
+					eye: [ 0, cameraDistance_y, cameraDistance_xz ],
 					up: [ 0, 1, 0 ],
 					fov: 45,					
-				},
-				{
-					left: 0.333,
-					bottom: 0.666,
-					width: 0.333,
-					height: 0.333,
-					background: new THREE.Color().setRGB( 0.7, 0.5, 0.5 ),
-					eye: [ 0, cameraDistance_y, cameraDistance_xz],
-					up: [ 0, 1, 0 ],
-					fov: 45,
 				},
 				{
 					left: 0.666,
@@ -71,11 +61,21 @@
 				},
 				{
 					left: 0.333,
-					bottom: 0.0,
+					bottom: 0.666,
+					width: 0.333,
+					height: 0.333,
+					background: new THREE.Color().setRGB( 0.7, 0.5, 0.5 ),
+					eye: [ 0, cameraDistance_y, cameraDistance_xz],
+					up: [ 0, 1, 0 ],
+					fov: 45,
+				},
+				{
+					left: 0,
+					bottom: 0.333,
 					width: 0.333,
 					height: 0.333,
 					background: new THREE.Color().setRGB( 0.5, 0.5, 0.7 ),
-					eye: [ 0, cameraDistance_y, cameraDistance_xz ],
+					eye: [ -cameraDistance_xz, cameraDistance_y, 0],
 					up: [ 0, 1, 0 ],
 					fov: 45,					
 				}
@@ -178,7 +178,20 @@
 
               attachTextureGeometry = new THREE.PlaneGeometry(texSize, texSize, 1, 1);
 
-              mainMeshes = new THREE.Mesh(attachTextureGeometry, planeMat);	           
+              mainMesh = new THREE.Mesh(attachTextureGeometry, planeMat);
+
+              finalScene = new THREE.Scene();
+
+              finalScene.add(mainMesh);
+
+              var finalLight = new THREE.DirectionalLight( 0xffffff);
+              finalLight.position.set(0,50,0);
+              finalScene.add(finalLight);
+
+              finalCamera = new THREE.OrthographicCamera(-texSize/2, texSize/2, texSize/2, -texSize/2, 1, 2);
+              finalCamera.position.set(0, 0, 1);
+              finalCamera.lookAt(finalScene.position);
+
 			}
 
 			function animate() {
@@ -191,11 +204,14 @@
 			function render() {
 
 				for ( var ii = 0; ii < views.length; ++ii ) {
-
+					mainMesh.material.needsUpdate = true;
 					view = views[ii];
 					camera = view.camera;
+					renderer.render( scene, camera, renderTarget);
 
-					camera.lookAt( scene.position );
+					// camera.lookAt( scene.position );
+
+					mainMesh.rotaion.x = Math.PI/2 * ii - Math.PI;
 
 					var left   = Math.floor( windowWidth  * view.left );
 					var bottom = Math.floor( windowHeight * view.bottom );
@@ -206,7 +222,7 @@
 					renderer.setScissorTest( true );
 					renderer.setClearColor( view.background );
 
-					renderer.render( scene, camera );
+					renderer.render( finalScene, camera );
 					
 				}
 
