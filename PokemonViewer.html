@@ -33,8 +33,9 @@
             var windowHalfX = window.innerWidth / 2;
             var windowHalfY = window.innerHeight / 2;
 
-            var cmaeraDistance_y = 10
-            var cmaeraDistance_xz = 15;
+            var cameraDistance_y = 5
+            var cameraDistance_xz = 5;
+            var cameraLookPos = THREE.Vector3(0,cameraDistance_y,0);
 
             //lenght is 4  in this program(front, right, back and left view)
             var renderTarget = [];
@@ -45,22 +46,22 @@
 
             var views = [
                 {
-                    eye: [ 0, cmaeraDistance_y, cmaeraDistance_xz ],
+                    eye: [ 0, cameraDistance_y, cameraDistance_xz ],
                     up: [ 0, 1, 0 ],
                     fov: 60,                    
                 },
                 {
-                    eye: [ cmaeraDistance_xz, cmaeraDistance_y, 0 ],
+                    eye: [ cameraDistance_xz, cameraDistance_y, 0 ],
                     up: [ 0, 1, 0 ],
                     fov: 60,
                 },
                 {
-                    eye: [ 0, cmaeraDistance_y, -cmaeraDistance_xz ],
+                    eye: [ 0, cameraDistance_y, -cameraDistance_xz ],
                     up: [ 0, 1, 0 ],
                     fov: 60,
                 },
                 {
-                    eye: [ -cmaeraDistance_xz, cmaeraDistance_y, 0 ],
+                    eye: [ -cameraDistance_xz, cameraDistance_y, 0 ],
                     up: [ 0, 1, 0 ],
                     fov: 60,                    
                 }
@@ -93,7 +94,7 @@
                     camera.up.y = view.up[ 1 ];
                     camera.up.z = view.up[ 2 ];
                     camera.aspect = windowWidth / windowHeight;
-                    camera.lookAt(scene.position);
+                    camera.lookAt(cameraLookPos);
                     view.camera = camera;
                 }
 
