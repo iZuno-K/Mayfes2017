@@ -26,13 +26,45 @@
 
             var container;
 
-            var camera, scene, renderer;
+            var camera, scene, renderer, mainScene, mainCamera;
 
             var mouseX = 0, mouseY = 0;
 
             var windowHalfX = window.innerWidth / 2;
             var windowHalfY = window.innerHeight / 2;
 
+            var cmaeraDistance_y = 10
+            var cmaeraDistance_xz = 15;
+
+            //lenght is 4  in this program(front, right, back and left view)
+            var renderTarget = [];
+            var planeMat = [];
+            var texSize = 50;
+            var attachTextureGeometry = [];
+            var mainMeshes = [];
+
+            var views = [
+                {
+                    eye: [ 0, cmaeraDistance_y, cmaeraDistance_xz ],
+                    up: [ 0, 1, 0 ],
+                    fov: 60,                    
+                },
+                {
+                    eye: [ cmaeraDistance_xz, cmaeraDistance_y, 0 ],
+                    up: [ 0, 1, 0 ],
+                    fov: 60,
+                },
+                {
+                    eye: [ 0, cmaeraDistance_y, -cmaeraDistance_xz ],
+                    up: [ 0, 1, 0 ],
+                    fov: 60,
+                },
+                {
+                    eye: [ -cmaeraDistance_xz, cmaeraDistance_y, 0 ],
+                    up: [ 0, 1, 0 ],
+                    fov: 60,                    
+                }
+            ];
 
             init();
             animate();
@@ -43,13 +75,29 @@
                 container = document.createElement( 'div' );
                 document.body.appendChild( container );
 
-                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-                camera.position.z = 15;
-                camera.position.y = 10;
+                //culculate the size of maximum square
+                var size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
+                windowWidth  = size;
+                windowHeight = size;
 
                 // scene
-
                 scene = new THREE.Scene();
+
+                for (var ii =  0; ii < views.length; ++ii ) {
+                    var view = views[ii];
+                    camera = new THREE.PerspectiveCamera( view.fov, windowWidth / windowHeight, 1, 100);
+                    camera.position.x = view.eye[ 0 ];
+                    camera.position.y = view.eye[ 1 ];
+                    camera.position.z = view.eye[ 2 ];
+                    camera.up.x = view.up[ 0 ];
+                    camera.up.y = view.up[ 1 ];
+                    camera.up.z = view.up[ 2 ];
+                    camera.aspect = windowWidth / windowHeight;
+                    camera.lookAt(scene.position);
+                    view.camera = camera;
+                }
+
+                //light
 
                 var ambient = new THREE.AmbientLight( 0x444444 );
                 scene.add( ambient );
@@ -102,11 +150,66 @@
                 renderer.setSize( window.innerWidth, window.innerHeight );
                 container.appendChild( renderer.domElement );
 
-                document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
+                //ivent listener
+                document.addEventListener( 'mousemove', onDocumentMouseMove, false );
                 //
 
                 window.addEventListener( 'resize', onWindowResize, false );
+
+
+                //setting of texxture rendering
+                for (var i = 0; i < views.length; i++) {
+                    renderTarget[i] = new THREE.WebGLRenderTarget(windowWidth / 3, windowHeight / 3, {
+                         magFilter: THREE.NearestFilter,
+                         minFilter: THREE.NearestFilter,
+                         wrapS: THREE.ClampToEdgeWrapping,
+                         wrapT: THREE.ClampToEdgeWrapping
+                    });
+
+                    planeMat[i] = new THREE.MeshLambertMaterial({
+                        color: 0xffffff,
+                        map: renderTarget[i],
+                        side: THREE.DoubleSide
+                    });
+
+                    attachTextureGeometry[i] = new THREE.PlaneGeometry(texSize, texSize, 1, 1);
+
+                    mainMeshes[i] = new THREE.Mesh(attachTextureGeometry[i], planeMat[i]);
+                }
+
+                //main rendering
+                mainCamera = new THREE.OrthographicCamera(-texSize*3/2, texSize*3/2, texSize*3/2, -texSize*3/2, 1, 2);
+                mainCamera.position.set(0, 1, 0);
+                mainCamera.up.x = 0;
+                mainCamera.up.y = 0;
+                mainCamera.up.z = -1;
+                mainCamera.lookAt(mainScene.position);
+                // camera.lookAt(mainScene.position);
+
+                mainMeshes[0].position.set(0, 0, 50);
+                mainMeshes[1].position.set(50, 0, 0);
+                mainMeshes[2].position.set(0, 0, -50);
+                mainMeshes[3].position.set(-50, 0, 0);
+
+
+                for (var i = 0; i < views.length; i++) {
+                    
+                    mainMeshes[i].rotation.x = Math.PI / -2;
+                    mainScene.add(mainMeshes[i]);
+                }
+
+                mainMeshes[1].rotation.z = Math.PI / 2;
+                mainMeshes[2].rotation.z = Math.PI;
+                mainMeshes[3].rotation.z = Math.PI / -2;
+
+                
+                var mainLight = new THREE.DirectionalLight( 0xffffff);
+                mainLight.position.set( 0, 50, 0);
+                mainLight.target.position.copy( mainScene.position );
+
+                mainScene.add(mainLight);
+
 
             }
 
@@ -134,20 +237,23 @@
             function animate() {
 
                 requestAnimationFrame( animate );
-                render();
+                renderToTexture();
+                renderer.render(mainScene, mainCamera);
 
             }
 
-            function render() {
-
-                camera.position.x += ( mouseX - camera.position.x ) * .05;
-                camera.position.y += ( - mouseY - camera.position.y ) * .05;
-
-                camera.lookAt( scene.position);
-
-                renderer.render( scene, camera );
-
+            function renderToTexture() {
+                for ( var ii = 0; ii < views.length; ++ii ) {
+                    view = views[ii];
+                    camera = view.camera;
+                    // camera.position.x += ( mouseX - camera.position.x ) * .05;
+                    // camera.position.y += ( - mouseY - camera.position.y ) * .05;
+                    // camera.lookAt( scene.position);
+                    mainMeshes[ii].material.needsUpdate = true;
+                    renderer.render( scene, camera, renderTarget[ii] );   
+                }
             }
+
 
         </script>
 
