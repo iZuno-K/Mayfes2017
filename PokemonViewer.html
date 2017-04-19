@@ -191,10 +191,10 @@
                 mainCamera.lookAt(mainScene.position);
                 // camera.lookAt(mainScene.position);
 
-                mainMeshes[0].position.set(0, 0, 50);
-                mainMeshes[1].position.set(50, 0, 0);
-                mainMeshes[2].position.set(0, 0, -50);
-                mainMeshes[3].position.set(-50, 0, 0);
+                mainMeshes[0].position.set(0, 0, texsize);
+                mainMeshes[1].position.set(texSize, 0, 0);
+                mainMeshes[2].position.set(0, 0, -texSize);
+                mainMeshes[3].position.set(-texSize, 0, 0);
 
 
                 for (var i = 0; i < views.length; i++) {
