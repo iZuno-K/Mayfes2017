@@ -44,6 +44,7 @@
             var texSize = 50;
             var attachTextureGeometry = [];
             var mainMeshes = [];
+            var obj;
 
             var views = [
                 {
@@ -136,9 +137,9 @@
                     objLoader.setMaterials( materials );
                     objLoader.setPath( 'Pikachu/' );
                     objLoader.load( 'Pikachu.obj', function ( object ) {
-
-                        object.position.y = 0;
-                        scene.add( object );
+                        obj = object;
+                        obj.position.y = 0;
+                        scene.add( obj );
 
                     }, onProgress, onError );
                     console.log(objLoader);
@@ -232,6 +233,8 @@
             }
 
             function renderToTexture() {
+                obj.rotation.y += 0.5;
+                obj.rotation.y %= 360;  
                 for ( var ii = 0; ii < views.length; ++ii ) {
                     view = views[ii];
                     camera = view.camera;
