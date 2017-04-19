@@ -240,6 +240,7 @@
             function renderToTexture() {
                 stats.update();
                 var fps = stats.getFps();
+                console.log(fps);
                 if (fps != 0) obj.rotation.y += 60 / fps;
                 obj.rotation.y %= 360;  
                 for ( var ii = 0; ii < views.length; ++ii ) {
