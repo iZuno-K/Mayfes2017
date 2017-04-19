@@ -246,7 +246,7 @@
                     var nowTime = now.getTime();
                     var past = (nowTime - lastTime) / 1000;
                     obj.rotation.y += 60 * past;
-                    lastTime = time;
+                    lastTime = nowTime;
                     console.log(past);
                 }
                 // console.log(fps);
