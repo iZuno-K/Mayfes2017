@@ -179,6 +179,8 @@
                 }
 
                 //main rendering
+                mainScene = new THREE.Scene();
+
                 mainCamera = new THREE.OrthographicCamera(-texSize*3/2, texSize*3/2, texSize*3/2, -texSize*3/2, 1, 2);
                 mainCamera.position.set(0, 1, 0);
                 mainCamera.up.x = 0;
