@@ -250,9 +250,9 @@
                 //     console.log(past);
                 // }
                 console.log(fps);
-                if (fps != 0) obj.rotation.y += 6 / fps;
+                if (fps != 0) obj.rotation.y += 2*Math.PI/60 / fps;
                 console.log(obj.rotation.y);
-                obj.rotation.y %= 360;  
+                // obj.rotation.y %= ;  
                 for ( var ii = 0; ii < views.length; ++ii ) {
                     view = views[ii];
                     camera = view.camera;
