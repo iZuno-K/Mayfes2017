@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js webgl - multiple views</title>
+		<title>Pikachu 3d Viewer</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
@@ -15,8 +15,6 @@
 	<body>
 
 		<div id="container"></div>
-		<div id="info"><a href="http://threejs.org" target="_blank">three.js</a> - multiple views - webgl</div>
-
 		<script src="js/libs/three.js"></script>
 		<script src="js/libs/stats.js"></script>
 		<script src="js/loaders/DDSLoader.js"></script>
@@ -40,7 +38,7 @@
          var cameraDistance_xz = 7;
          var cameraLookPos = new THREE.Vector3(0,3,0);
 
-         var obj;
+         var obj,percentComplete=0;
 
 			var views = [
 				{
@@ -87,6 +85,9 @@
 
 			window.onload = function() {
 				init();
+				while (true) {
+					if (percentComplete == 100) break;	
+				}
 				animate();
 			}
 			//main function end
@@ -137,7 +138,7 @@
 
 	          var onProgress = function ( xhr ) {
 	              if ( xhr.lengthComputable ) {
-	                  var percentComplete = xhr.loaded / xhr.total * 100;
+	                  percentComplete = xhr.loaded / xhr.total * 100;
 	                  console.log( Math.round(percentComplete, 2) + '% downloaded' );
 	              }
 	          };
