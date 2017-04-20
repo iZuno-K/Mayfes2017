@@ -32,7 +32,7 @@
 			var container, stats;
 
 			var views, scene, renderer;
-			var texSize = 64, planeSize = 10.1;
+			var texSize = 128, planeSize = 10;
 			var windowWidth, windowHeight;
 
 			var cameraDistance_y = 4;
@@ -106,7 +106,7 @@
 				for (var ii =  0; ii < views.length; ++ii ) {
 
 					var view = views[ii];
-					camera = new THREE.PerspectiveCamera( view.fov, windowWidth / windowHeight, 1, 100 );
+					camera = new THREE.PerspectiveCamera( view.fov, windowWidth / windowHeight, 1, cameraDistance_xz*2);
 					camera.position.x = view.eye[ 0 ];
 					camera.position.y = view.eye[ 1 ];
 					camera.position.z = view.eye[ 2 ];
