@@ -185,7 +185,7 @@
 				mirrorMesh.rotateY( - Math.PI / 2 );
 				mirrorMesh.position.x = cameraDistance_xz*2;
 				scene.add( mirrorMesh );
-				views[1].camera.lookAt(new Vector3(cameraDistance_xz*2, 3 , 0));
+				views[1].camera.lookAt(new THREE.Vector3(cameraDistance_xz*2, 3 , 0));
 				console.log(mirrorMesh.position);
 
 				leftMirror = new THREE.Mirror( renderer, views[3].camera, { clipBias: 0.003, textureWidth: texSize, textureHeight: texSize, color:0x889999 } );
@@ -194,7 +194,7 @@
 				leftMirrorMesh.add( leftMirror );
 				leftMirrorMesh.rotateY( Math.PI / 2 );
 				leftMirrorMesh.position.x = -cameraDistance_xz*2;
-				views[3].camera.lookAt(new Vector3(-cameraDistance_xz*2, 3 , 0));
+				views[3].camera.lookAt(new THREE.Vector3(-cameraDistance_xz*2, 3 , 0));
 				scene.add( leftMirrorMesh );
 	          
 			}
