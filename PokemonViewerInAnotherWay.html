@@ -85,10 +85,6 @@
 
 			window.onload = function() {
 				init();
-				while (true) {
-					if (Math.round(percentComplete, 2) == 100) break;
-					console.log(Math.round(percentComplete, 2));	
-				}
 				animate();
 			}
 			//main function end
@@ -181,7 +177,7 @@
 			function animate() {
 				stats.update();
 				var fps = stats.getFps();
-				obj.rotation.y += 2*Math.PI/30 / fps;
+				if (Math.round(percentComplete, 2) == 100)  obj.rotation.y += 2*Math.PI/30 / fps;
 
 				render();
 
