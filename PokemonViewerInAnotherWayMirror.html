@@ -1,0 +1,235 @@
+<!-- webgl_multiple_views -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Pikachu 3d Viewer</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body{
+		    margin-left: 0;
+		    padding-left: 0;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="container"></div>
+		<script src="js/libs/three.js"></script>
+		<script src="js/libs/stats.js"></script>
+		<script src="js/loaders/DDSLoader.js"></script>
+      <script src="js/loaders/MTLLoader.js"></script>
+      <script src="js/loaders/OBJLoader.js"></script>
+      
+
+		<script src="js/Detector.js"></script>
+
+		<script>
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container, stats;
+
+			var views, scene, renderer;
+			var texSize = 64, planeSize = 10.1;
+			var windowWidth, windowHeight;
+
+			var cameraDistance_y = 4;
+         var cameraDistance_xz = 7;
+         var cameraLookPos = new THREE.Vector3(0,3,0);
+
+         var obj,percentComplete=0;
+
+         var rightMirror, leftMirror;
+
+			var views = [
+				{	//front
+					left: 0.333,
+					bottom: 0.0,
+					width: 0.333,
+					height: 0.333,
+					background: new THREE.Color().setRGB( 0.5, 0.5, 0.7 ),
+					eye: [ 0, cameraDistance_y, cameraDistance_xz ],
+					up: [ 0, -1, 0 ],
+					fov: 45,					
+				},
+				{  //right
+					left: 0.666,
+					bottom: 0.333,
+					width: 0.333,
+					height: 0.333,
+					background: new THREE.Color().setRGB( 0.5, 0.7, 0.7 ),
+					eye: [ -cameraDistance_xz, cameraDistance_y, 0 ],
+					up: [ 0, 0, -1 ],
+					fov: 45,
+				},
+				{	//back
+					left: 0.333,
+					bottom: 0.666,
+					width: 0.333,
+					height: 0.333,
+					background: new THREE.Color().setRGB( 0.7, 0.5, 0.5 ),
+					eye: [ 0, cameraDistance_y, -cameraDistance_xz],
+					up: [ 0, 1, 0 ],
+					fov: 45,
+				},
+				{	//left
+					left: 0,
+					bottom: 0.333,
+					width: 0.333,
+					height: 0.333,
+					background: new THREE.Color().setRGB( 0.5, 0.5, 0.7 ),
+					eye: [ cameraDistance_xz, cameraDistance_y, 0],
+					up: [ 0, 0, -1 ],
+					fov: 45,					
+				}
+			];
+
+			window.onload = function() {
+				init();
+				animate();
+			}
+			//main function end
+			//below are functions used above
+
+			function init() {
+
+				container = document.getElementById( 'container' );
+
+				scene = new THREE.Scene();
+
+				var size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
+				windowWidth  = size;
+				windowHeight = size;
+
+				for (var ii =  0; ii < views.length; ++ii ) {
+
+					var view = views[ii];
+					camera = new THREE.PerspectiveCamera( view.fov, windowWidth / windowHeight, 1, 100 );
+					camera.position.x = view.eye[ 0 ];
+					camera.position.y = view.eye[ 1 ];
+					camera.position.z = view.eye[ 2 ];
+					camera.up.x = view.up[ 0 ];
+					camera.up.y = view.up[ 1 ];
+					camera.up.z = view.up[ 2 ];
+					camera.aspect = windowWidth / windowHeight;
+					camera.lookAt(cameraLookPos);
+					view.camera = camera;
+
+				}
+
+				
+	          var ambient = new THREE.AmbientLight( 0x444444 );
+	          scene.add( ambient );
+
+	          var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+	          directionalLight.position.set( 0, 1, 1 ).normalize();
+	          scene.add( directionalLight );
+
+
+	          var directionalLight2 = new THREE.DirectionalLight( 0xffeedd );
+	          directionalLight2.position.set( 0, 1, -1 ).normalize();
+	          scene.add( directionalLight2 );
+
+	          // model
+
+	          var onProgress = function ( xhr ) {
+	              if ( xhr.lengthComputable ) {
+	                  percentComplete = xhr.loaded / xhr.total * 100;
+	                  console.log( Math.round(percentComplete, 2) + '% downloaded' );
+	              }
+	          };
+
+	          var onError = function ( xhr ) { };
+
+	          THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+
+	          var mtlLoader = new THREE.MTLLoader();
+	          mtlLoader.setPath( 'Pikachu/' );
+	          mtlLoader.load( 'Pikachu.mtl', function( materials ) {
+
+	              materials.preload();
+
+	              var objLoader = new THREE.OBJLoader();
+	              objLoader.setMaterials( materials );
+	              objLoader.setPath( 'Pikachu/' );
+	              objLoader.load( 'Pikachu.obj', function ( object ) {
+	                  obj = object;
+	                  obj.position.y = 0;
+	                  scene.add( obj );
+
+	              }, onProgress, onError );
+	              // console.log(objLoader);
+
+	          });
+
+	          //
+
+	          renderer = new THREE.WebGLRenderer();
+	          renderer.setPixelRatio( window.devicePixelRatio );
+	          renderer.setSize( windowWidth, windowHeight );
+	          container.appendChild( renderer.domElement );
+
+	          stats = new Stats();
+
+
+	          //Mirror creation
+ 				var planeGeo = new THREE.PlaneBufferGeometry( planeSize, planeSize );
+
+				// MIRROR planes
+				rightMirror = new THREE.Mirror( renderer, views[1].camera, { clipBias: 0.003, textureWidth: texSize, textureHeight: texSize, color: 0x777777 } );
+
+				var mirrorMesh = new THREE.Mesh( planeGeo, rightMirror.material );
+				mirrorMesh.add( rightMirror );
+				mirrorMesh.rotateY( - Math.PI / 2 );
+				mirrorMesh.position.x = cameraDistance_xz*2;
+				scene.add( mirrorMesh );
+
+				leftMirror = new THREE.Mirror( renderer, views[3].camera, { clipBias: 0.003, textureWidth: texSize, textureHeight: texSize, color:0x889999 } );
+
+				var leftMirrorMesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( planeSize, planeSize ), leftMirror.material );
+				leftMirrorMesh.add( leftMirror );
+				mirrorMesh.rotateY( Math.PI / 2 );
+				mirrorMesh.position.x = -cameraDistance_xz*2;			
+				scene.add( leftMirrorMesh );
+	          
+			}
+
+			function animate() {
+				// stats.update();
+				// var fps = stats.getFps();
+				// if (Math.round(percentComplete, 2) == 100)  obj.rotation.y += 2*Math.PI/30 / fps;
+
+				render();
+
+				requestAnimationFrame( animate );
+			}
+
+			function render() {
+				rightMirror.render();
+				leftMirror.render();
+				for ( var ii = 0; ii < views.length; ++ii ) {
+					view = views[ii];
+					camera = view.camera;
+
+					// camera.lookAt( scene.position );
+
+					var left   = Math.floor( windowWidth  * view.left );
+					var bottom = Math.floor( windowHeight * view.bottom );
+					var width  = Math.floor( windowWidth  * view.width );
+					var height = Math.floor( windowHeight * view.height );
+					renderer.setViewport( left, bottom, width, height );
+					renderer.setScissor( left, bottom, width, height );
+					renderer.setScissorTest( true );
+					// renderer.setClearColor( view.background );
+
+					renderer.render( scene, camera );
+					
+				}
+
+			}
+
+		</script>
+
+	</body>
+</html>
