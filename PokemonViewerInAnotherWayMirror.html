@@ -106,7 +106,7 @@
 				for (var ii =  0; ii < views.length; ++ii ) {
 
 					var view = views[ii];
-					camera = new THREE.PerspectiveCamera( view.fov, windowWidth / windowHeight, 1, cameraDistance_xz*2);
+					camera = new THREE.PerspectiveCamera( view.fov, windowWidth / windowHeight, 1, cameraDistance_xz*3);
 					camera.position.x = view.eye[ 0 ];
 					camera.position.y = view.eye[ 1 ];
 					camera.position.z = view.eye[ 2 ];
