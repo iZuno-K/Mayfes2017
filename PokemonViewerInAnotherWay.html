@@ -86,7 +86,8 @@
 			window.onload = function() {
 				init();
 				while (true) {
-					if (percentComplete == 100) break;	
+					if (Math.round(percentComplete, 2) == 100) break;
+					console.log(Math.round(percentComplete, 2));	
 				}
 				animate();
 			}
