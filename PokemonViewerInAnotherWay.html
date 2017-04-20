@@ -160,7 +160,6 @@
 	                  scene.add( obj );
 	                  console.log(obj);
 	              }, onProgress, onError );
-	              console.log(obj);
 
 	          });
 
@@ -178,8 +177,14 @@
 			function animate() {
 				stats.update();
 				var fps = stats.getFps();
-				console.log(obj);
+				var flag = 0;
+				if (obj != null) {
+					console.log(obj);
+					flag = 1;	
+				}
+		
 				// if (Math.round(percentComplete, 2) == 100)  obj.rotation.y += 2*Math.PI/30 / fps;
+				if (flag == 1) obj.rotation.y += 2*Math.PI/30 / fps;
 
 				render();
 
