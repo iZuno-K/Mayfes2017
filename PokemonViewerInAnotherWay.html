@@ -185,7 +185,7 @@
 		
 				// if (Math.round(percentComplete, 2) == 100)  obj.rotation.y += 2*Math.PI/30 / fps;
 				if (flag == 1) {
-					obj.rotation.y += 2*Math.PI/30 / fps;
+					if (fps > 5) obj.rotation.y += 2*Math.PI/30 / fps;
 					console.log(obj.rotation.y);
 				}
 				render();
