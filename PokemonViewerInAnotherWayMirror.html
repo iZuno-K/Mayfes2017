@@ -185,6 +185,8 @@
 				mirrorMesh.rotateY( - Math.PI / 2 );
 				mirrorMesh.position.x = cameraDistance_xz*2;
 				scene.add( mirrorMesh );
+				views[1].camera.lookAt(mirrorMesh.position);
+				console.log(mirrorMesh.position);
 
 				leftMirror = new THREE.Mirror( renderer, views[3].camera, { clipBias: 0.003, textureWidth: texSize, textureHeight: texSize, color:0x889999 } );
 
