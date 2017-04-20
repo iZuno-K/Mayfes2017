@@ -60,8 +60,8 @@
 					width: 0.333,
 					height: 0.333,
 					background: new THREE.Color().setRGB( 0.5, 0.7, 0.7 ),
-					eye: [ -cameraDistance_xz, cameraDistance_y, 0 ],
-					up: [ 0, 0, -1 ],
+					eye: [ cameraDistance_xz, cameraDistance_y, 0 ],
+					up: [ 0, 1, 0 ],
 					fov: 45,
 				},
 				{	//back
@@ -80,8 +80,8 @@
 					width: 0.333,
 					height: 0.333,
 					background: new THREE.Color().setRGB( 0.5, 0.5, 0.7 ),
-					eye: [ cameraDistance_xz, cameraDistance_y, 0],
-					up: [ 0, 0, -1 ],
+					eye: [ -cameraDistance_xz, cameraDistance_y, 0],
+					up: [ 0, 1, 0 ],
 					fov: 45,					
 				}
 			];
@@ -190,10 +190,11 @@
 
 				leftMirror = new THREE.Mirror( renderer, views[3].camera, { clipBias: 0.003, textureWidth: texSize, textureHeight: texSize, color:0x889999 } );
 
-				var leftMirrorMesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( planeSize, planeSize ), leftMirror.material );
+				var leftMirrorMesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( planeSize*10, planeSize*10 ), leftMirror.material );
 				leftMirrorMesh.add( leftMirror );
-				// mirrorMesh.rotateY( Math.PI / 2 );
-				// mirrorMesh.position.x = -cameraDistance_xz*2;			
+				leftMirrorMesh.rotateY( Math.PI / 2 );
+				leftMirrorMesh.position.x = -cameraDistance_xz*2;
+				views[3].camera.lookAt(leftMirrorMesh.position);
 				scene.add( leftMirrorMesh );
 	          
 			}
