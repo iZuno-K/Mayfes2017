@@ -130,9 +130,9 @@
 	          directionalLight.position.set( 0, 0, 1 ).normalize();
 	          scene.add( directionalLight );
 
-	          var directionalLight2 = new THREE.DirectionalLight( 0xffeedd );
-	          directionalLight2.position.set( 0, 0, -4 );
-	          scene.add( directionalLight2 );
+	          // var directionalLight2 = new THREE.DirectionalLight( 0xffeedd );
+	          // directionalLight2.position.set( 0, 0, -4 );
+	          // scene.add( directionalLight2 );
 
  	          var directionalLight3 = new THREE.DirectionalLight( 0xffeedd );
 	          directionalLight3.position.set( 1, 1, 0 ).normalize();
@@ -220,8 +220,8 @@
 
 			function render() {
 				var tuning = 0.8;
-				renderer.setViewport( texSize*tuning, texSize*tuning, texSize*tuning, texSize*tuning );
-				renderer.setScissor( texSize*tuning, texSize*tuning, texSize*tuning, texSize*tuning );
+				renderer.setViewport( windowWidth/2 - texSize*tuning, windowHeight/2 - texSize*tuning, texSize*tuning, texSize*tuning );
+				renderer.setScissor( windowWidth/2 - texSize*tuning, windowHeight/2 - texSize*tuning, texSize*tuning, texSize*tuning );
 				renderer.setScissorTest( true );
 				renderer.render( scene, imageCamera );
 				
