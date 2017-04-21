@@ -42,6 +42,8 @@
          var percentComplete=0;
          var flag = 0;
 
+         var imageCamera
+
 			var views = [
 				{
 					left: 0.333,
@@ -193,16 +195,13 @@
 	          imageLight.position.set( 0, 0, -50 ).normalize();
 	          imageLight.target.position.set(imageMesh.position);
 	          scene.add( imageLight );
-	         var imageCamera = new THREE.OrthographicCamera(-texSize/2,texSize/2,texSize/2,-texSize/2,1,100);
-	         imageCamera.position.z = -10;
+	         imageCamera = new THREE.OrthographicCamera(-texSize/2,texSize/2,texSize/2,-texSize/2,1,100);
+	         imageCamera.position.z = -50;
 	         imageCamera.lookAt(imageMesh.position);
 				renderer.setViewport( -texSize/2, -texSize/2, texSize, texSize );
 				renderer.setScissor( -texSize/2, -texSize/2, texSize, texSize );
 				renderer.setScissorTest( true );
 				// renderer.setClearColor( view.background );
-
-				renderer.render( scene, imageCamera );
-
 
 	          
 			}
@@ -226,7 +225,11 @@
 			}
 
 			function render() {
-
+				renderer.setViewport( -texSize/2, -texSize/2, texSize, texSize );
+				renderer.setScissor( -texSize/2, -texSize/2, texSize, texSize );
+				renderer.setScissorTest( true );
+				renderer.render( scene, imageCamera );
+				
 				for ( var ii = 0; ii < views.length; ++ii ) {
 					view = views[ii];
 					camera = view.camera;
