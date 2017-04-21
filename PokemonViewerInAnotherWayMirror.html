@@ -132,6 +132,11 @@
 	          directionalLight2.position.set( 0, 1, -1 ).normalize();
 	          scene.add( directionalLight2 );
 
+
+	          var directionalLight3 = new THREE.DirectionalLight( 0xffeedd );
+	          directionalLight3.position.set( 0, 0, -1 ).normalize();
+	          scene.add( directionalLight3 );
+
 	          // model
 
 	          var onProgress = function ( xhr ) {
@@ -196,7 +201,14 @@
 				leftMirrorMesh.position.x = -cameraDistance_xz*2;
 				views[3].camera.lookAt(new THREE.Vector3(-cameraDistance_xz*2, 3 , 0));
 				scene.add( leftMirrorMesh );
-	          
+
+
+				var imageGeometry = new THREE.PlaneGeometry(size, size);
+				var texture = THREE.ImageUtils.loadTexture( 'image/monster_ball.png' );
+	         var imageMaterial = new THREE.MeshPhongMaterial( { map: texture } );
+	         var imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
+	         imageMesh.rotation.x = -Math.PI/2
+	         scene.add(imageMesh)
 			}
 
 			function animate() {
