@@ -131,7 +131,7 @@
 	          scene.add( directionalLight );
 
 	          var directionalLight2 = new THREE.DirectionalLight( 0xffeedd );
-	          directionalLight2.position.set( 0, 0, -2 );
+	          directionalLight2.position.set( 0, 0, -4 );
 	          scene.add( directionalLight2 );
 
  	          var directionalLight3 = new THREE.DirectionalLight( 0xffeedd );
@@ -197,13 +197,7 @@
 	          scene.add( imageLight );
 	         imageCamera = new THREE.OrthographicCamera(-texSize/2,texSize/2,texSize/2,-texSize/2,1,100);
 	         imageCamera.position.z = -50;
-	         imageCamera.lookAt(imageMesh.position);
-				renderer.setViewport( -texSize/2, -texSize/2, texSize, texSize );
-				renderer.setScissor( -texSize/2, -texSize/2, texSize, texSize );
-				renderer.setScissorTest( true );
-				// renderer.setClearColor( view.background );
-
-	          
+	         imageCamera.lookAt(imageMesh.position);	          
 			}
 
 			function animate() {
@@ -225,8 +219,9 @@
 			}
 
 			function render() {
-				renderer.setViewport( texSize, texSize, texSize, texSize );
-				renderer.setScissor( texSize, texSize, texSize, texSize );
+				var tuning = 0.8;
+				renderer.setViewport( texSize*tuning, texSize*tuning, texSize*tuning, texSize*tuning );
+				renderer.setScissor( texSize*tuning, texSize*tuning, texSize*tuning, texSize*tuning );
 				renderer.setScissorTest( true );
 				renderer.render( scene, imageCamera );
 				
