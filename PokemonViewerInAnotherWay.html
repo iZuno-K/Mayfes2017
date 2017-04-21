@@ -220,8 +220,8 @@
 
 			function render() {
 				var tuning = 0.8;
-				renderer.setViewport( windowWidth/2 - texSize*tuning, windowHeight/2 - texSize*tuning, texSize*tuning, texSize*tuning );
-				renderer.setScissor( windowWidth/2 - texSize*tuning, windowHeight/2 - texSize*tuning, texSize*tuning, texSize*tuning );
+				renderer.setViewport( windowWidth/2 - texSize/2*tuning, windowHeight/2 - texSize/2*tuning, texSize*tuning, texSize*tuning );
+				renderer.setScissor( windowWidth/2 - texSize/2*tuning, windowHeight/2 - texSize/2*tuning, texSize*tuning, texSize*tuning );
 				renderer.setScissorTest( true );
 				renderer.render( scene, imageCamera );
 				
