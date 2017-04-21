@@ -173,13 +173,24 @@
 
 	          stats = new Stats();
 
-    			var imageGeometry = new THREE.PlaneGeometry(size, size);
+	          //draw image once at center
+    			var imageGeometry = new THREE.PlaneGeometry(texSize, texSize);
     			var loader = new THREE.TextureLoader();
     			var texture = loader.load('image/monster_ball.png');
 	         var imageMaterial = new THREE.MeshBasicMaterial( { map: texture } );
 	         var imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
-	         imageMesh.rotation.x = -Math.PI/2
-	         scene.add(imageMesh)
+	         imageMesh.position.z = - 100;
+	         scene.add(imageMesh);
+	         var imageCamera = new THREE.OrthographicCamera(-texSize/2,texSize/2,texSize/2,-texSize/2,1,100);
+	         imageCamera.position.z = -10;
+				renderer.setViewport( -texSize/2, -texSize/2, texSize, texSize );
+				renderer.setScissor( -texSize/2, -texSize/2, texSize, texSize );
+				renderer.setScissorTest( true );
+				// renderer.setClearColor( view.background );
+
+				renderer.render( scene, imageCamera );
+
+
 	          
 			}
 
