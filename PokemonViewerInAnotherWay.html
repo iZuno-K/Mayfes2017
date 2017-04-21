@@ -172,6 +172,14 @@
 	          container.appendChild( renderer.domElement );
 
 	          stats = new Stats();
+
+    			var imageGeometry = new THREE.PlaneGeometry(size, size);
+    			var loader = THREE.TextureLoader();
+    			var texture = loader.load('image/monster_ball.png');
+	         var imageMaterial = new THREE.MeshBasicMaterial( { map: texture } );
+	         var imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
+	         imageMesh.rotation.x = -Math.PI/2
+	         scene.add(imageMesh)
 	          
 			}
 
