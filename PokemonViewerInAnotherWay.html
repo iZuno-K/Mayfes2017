@@ -125,13 +125,21 @@
 	          scene.add( ambient );
 
 	          var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-	          directionalLight.position.set( 0, 1, 1 ).normalize();
+	          directionalLight.position.set( 0, 0, 1 ).normalize();
 	          scene.add( directionalLight );
 
-
 	          var directionalLight2 = new THREE.DirectionalLight( 0xffeedd );
-	          directionalLight2.position.set( 0, 1, -1 ).normalize();
+	          directionalLight2.position.set( 0, 0, -1 ).normalize();
 	          scene.add( directionalLight2 );
+
+ 	          var directionalLight3 = new THREE.DirectionalLight( 0xffeedd );
+	          directionalLight3.position.set( 1, 1, 0 ).normalize();
+	          scene.add( directionalLight3 );
+
+	          var directionalLight4 = new THREE.DirectionalLight( 0xffeedd );
+	          directionalLight4.position.set( -1, 1, 0 ).normalize();
+	          scene.add( directionalLight4 );
+
 
 	          // model
 
@@ -173,7 +181,7 @@
 
 	          stats = new Stats();
 
-	          //draw image once at center
+	          //draw image once at center 
     			var imageGeometry = new THREE.PlaneGeometry(texSize, texSize);
     			var loader = new THREE.TextureLoader();
     			var texture = loader.load('image/monster_ball.png');
@@ -181,8 +189,13 @@
 	         var imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
 	         imageMesh.position.z = - 100;
 	         scene.add(imageMesh);
+	          var imageLight = new THREE.DirectionalLight( 0xffeedd );
+	          imageLight.position.set( 0, 0, -50 ).normalize();
+	          imageLight.target.position.set(imageMesh.position);
+	          scene.add( imageLight );
 	         var imageCamera = new THREE.OrthographicCamera(-texSize/2,texSize/2,texSize/2,-texSize/2,1,100);
 	         imageCamera.position.z = -10;
+	         imageCamera.lookAt(imageMesh.position);
 				renderer.setViewport( -texSize/2, -texSize/2, texSize, texSize );
 				renderer.setScissor( -texSize/2, -texSize/2, texSize, texSize );
 				renderer.setScissorTest( true );
