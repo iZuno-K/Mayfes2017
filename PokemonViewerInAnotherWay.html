@@ -115,17 +115,23 @@
 			}());
 
 			window.onload = function() {
+				renderInit();
 				setPokemon();
 				animate();
 			}
 			//main function end
 			//below are functions used above
 
+			function renderInit() {				
+				container = document.getElementById( 'container' );
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( windowWidth, windowHeight );
+				container.appendChild( renderer.domElement );
+			}
 
 			//init function is called by setPokemon()
 			function init() {
-
-				container = document.getElementById( 'container' );
 
 				scene = new THREE.Scene();
 
@@ -203,12 +209,6 @@
 
 	          });
 
-	          //
-
-	          renderer = new THREE.WebGLRenderer();
-	          renderer.setPixelRatio( window.devicePixelRatio );
-	          renderer.setSize( windowWidth, windowHeight );
-	          container.appendChild( renderer.domElement );
 
 	          stats = new Stats();
 
