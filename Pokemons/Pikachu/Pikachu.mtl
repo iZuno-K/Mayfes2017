@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Textures\PikachuDh.tga
+map_Kd Textures\PikachuDh.png
 
 newmtl mat2.001
 Ns 9.803922
@@ -21,7 +21,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Textures\PikachuEyeDh.tga
+map_Kd Textures\PikachuEyeDh.png
 
 newmtl mat3.001
 Ns 9.803922
@@ -32,7 +32,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Textures\PikachuHohoDh.tga
+map_Kd Textures\PikachuHohoDh.png
 
 newmtl mat4.001
 Ns 9.803922
@@ -43,7 +43,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Textures\PikachuMouthDh.tga
+map_Kd Textures\PikachuMouthDh.png
 
 newmtl mat5.001
 Ns 9.803922
@@ -54,4 +54,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Textures\PikachuDh.tga
+map_Kd Textures\PikachuDh.png

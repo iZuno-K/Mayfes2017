@@ -53,6 +53,8 @@
 
          var imageCamera
 
+         var pokemon, directory
+
 			var views = [
 				{
 					left: 0.333,
@@ -108,6 +110,8 @@
 			function init() {
 
 				container = document.getElementById( 'container' );
+
+				setPokemon();
 
 				scene = new THREE.Scene();
 
@@ -168,15 +172,15 @@
 	          THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 
 	          var mtlLoader = new THREE.MTLLoader();
-	          mtlLoader.setPath( 'Pokemons/Charmander/' );
-	          mtlLoader.load( 'BR_Charmander.mtl', function( materials ) {
+	          mtlLoader.setPath( directory );
+	          mtlLoader.load( pokemon+'.mtl', function( materials ) {
 
 	              materials.preload();
 
 	              var objLoader = new THREE.OBJLoader();
 	              objLoader.setMaterials( materials );
-	              objLoader.setPath( 'Pokemons/Charmander/' );
-	              objLoader.load( 'BR_Charmander.obj', function ( object ) {
+	              objLoader.setPath( directory );
+	              objLoader.load( pokemon + '.obj', function ( object ) {
 	                  obj = object;
 	                  obj.position.y = 0;
 	                  scene.add( obj );
@@ -243,7 +247,7 @@
 
 					// camera.lookAt( scene.position );
 
-					var left   = Math.floor( windowWidth  * view.left );
+					var left   = Math.floor( windowWidth  * view.left );	
 					var bottom = Math.floor( windowHeight * view.bottom );
 					var width  = Math.floor( windowWidth  * view.width );
 					var height = Math.floor( windowHeight * view.height );
@@ -259,8 +263,8 @@
 			}
 
 			function setPokemon() {
-				var pokemon = document.PokemonList.PokemonName.value
-				var directory = "Pokemons" + pokemon
+				pokemon = document.PokemonList.PokemonName.value
+				directory = "Pokemons/" + pokemon + "/"
 				console.log(pokemon)	
 				console.log(directory)	
 			}
