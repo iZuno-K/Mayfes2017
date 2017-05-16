@@ -41,7 +41,7 @@
 
 			var views, scene, renderer;
 			var texSize;
-			var windowWidth, windowHeight;
+			var size,windowWidth, windowHeight;
 
 			var cameraDistance_y = 4;
          var cameraDistance_xz = 7;
@@ -124,7 +124,7 @@
 
 			function renderInit() {				
 				container = document.getElementById( 'container' );
-				var size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
+				size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
 				windowWidth  = size;
 				windowHeight = size;
 				renderer = new THREE.WebGLRenderer();
