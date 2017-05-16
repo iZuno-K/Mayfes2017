@@ -157,15 +157,15 @@
 	          THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 
 	          var mtlLoader = new THREE.MTLLoader();
-	          mtlLoader.setPath( 'Pikachu/' );
-	          mtlLoader.load( 'Pikachu.mtl', function( materials ) {
+	          mtlLoader.setPath( 'Pokemons/Charmander/' );
+	          mtlLoader.load( 'BR_Charmander.mtl', function( materials ) {
 
 	              materials.preload();
 
 	              var objLoader = new THREE.OBJLoader();
 	              objLoader.setMaterials( materials );
-	              objLoader.setPath( 'Pikachu/' );
-	              objLoader.load( 'Pikachu.obj', function ( object ) {
+	              objLoader.setPath( 'Pokemons/Charmander/' );
+	              objLoader.load( 'BR_Charmander.obj', function ( object ) {
 	                  obj = object;
 	                  obj.position.y = 0;
 	                  scene.add( obj );
