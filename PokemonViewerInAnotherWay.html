@@ -124,6 +124,9 @@
 
 			function renderInit() {				
 				container = document.getElementById( 'container' );
+				var size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
+				windowWidth  = size;
+				windowHeight = size;
 				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( windowWidth, windowHeight );
@@ -134,10 +137,6 @@
 			function init() {
 
 				scene = new THREE.Scene();
-
-				var size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
-				windowWidth  = size;
-				windowHeight = size;
 
 				texSize = size / 3;
 
