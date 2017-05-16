@@ -98,20 +98,34 @@
 				}
 			];
 
+			//setting for stop animation
+			var animation_ID;
+			window.cancelAnimationFrame = (function() {
+			  return window.cancelAnimationFrame ||
+			         window.cancelRequestAnimationFrame ||
+			         window.webkitCancelAnimationFrame ||
+			         window.webkitCancelRequestAnimationFrame ||
+			         window.mozCancelAnimationFrame ||
+			         window.mozCancelRequestAnimationFrame ||
+			         window.msCancelAnimationFrame ||
+			         window.msCancelRequestAnimationFrame ||
+			         window.oCancelAnimationFrame ||
+			         window.oCancelRequestAnimationFrame ||
+			         function(id) { window.clearTimeout(id); };
+			}());
+
 			window.onload = function() {
-				init();
+				setPokemon();
 				animate();
 			}
 			//main function end
 			//below are functions used above
 
 
-
+			//init function is called by setPokemon()
 			function init() {
 
 				container = document.getElementById( 'container' );
-
-				setPokemon();
 
 				scene = new THREE.Scene();
 
@@ -230,7 +244,7 @@
 				}
 				render();
 
-				requestAnimationFrame( animate );
+				animation_ID = requestAnimationFrame( animate );
 			}
 
 			function render() {
@@ -263,10 +277,10 @@
 			}
 
 			function setPokemon() {
-				pokemon = document.PokemonList.PokemonName.value
-				directory = "Pokemons/" + pokemon + "/"
-				console.log(pokemon)	
-				console.log(directory)	
+				pokemon = document.PokemonList.PokemonName.value;
+				directory = "Pokemons/" + pokemon + "/";
+				cancelAnimationFrame(_animationID);
+				init();
 			}
 
 		</script>
