@@ -13,6 +13,15 @@
 		</style>
 	</head>
 	<body>
+		<p>ポケモン：<br>
+			<form name ="PokemonList">
+				<select name="PokemonName" onchange="setPokemon()">
+					<option value="Pikachu" selected="">ピカチュウ</option>
+					<option value="Charmander">ヒトカゲ</option>				
+				</select>
+			</form>
+		</p>
+
 
 		<div id="container"></div>
 		<script src="js/libs/three.js"></script>
@@ -247,6 +256,11 @@
 					
 				}
 
+			}
+
+			function setPokemon() {
+				var pokemon = document.PokemonList.PokemonName.value
+				console.log(pokemon)	
 			}
 
 		</script>
