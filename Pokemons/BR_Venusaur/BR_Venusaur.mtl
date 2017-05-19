@@ -1,8 +1,8 @@
 # Blender MTL File: 'None'
 # Material Count: 3
 
-newmtl mat_0.002
-Ns 94.117647
+newmtl mat_0.009
+Ns 92.156863
 Ka 0.000000 0.000000 0.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.000000 0.000000 0.000000
@@ -13,8 +13,8 @@ illum 2
 map_Kd Textures\fushigibana_0_0.png
 map_d Textures\\fushigibana_0_0.png
 
-newmtl mat_1.002
-Ns 94.117647
+newmtl mat_1.009
+Ns 92.156863
 Ka 0.000000 0.000000 0.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.000000 0.000000 0.000000
@@ -25,8 +25,8 @@ illum 2
 map_Kd Textures\fushigibana_0_3.png
 map_d Textures\\fushigibana_0_3.png
 
-newmtl mat_2
-Ns 94.117647
+newmtl mat_2.001
+Ns 92.156863
 Ka 0.000000 0.000000 0.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.000000 0.000000 0.000000

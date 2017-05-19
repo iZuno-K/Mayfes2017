@@ -1,8 +1,8 @@
 # Blender MTL File: 'None'
 # Material Count: 2
 
-newmtl mat_0.001
-Ns 94.117647
+newmtl mat_0.008
+Ns 92.156863
 Ka 0.000000 0.000000 0.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.000000 0.000000 0.000000
@@ -13,8 +13,8 @@ illum 2
 map_Kd Textures\fushigisou_0_0.png
 map_d Textures\\fushigisou_0_0.png
 
-newmtl mat_1.001
-Ns 94.117647
+newmtl mat_1.008
+Ns 92.156863
 Ka 0.000000 0.000000 0.000000
 Kd 0.800000 0.800000 0.800000
 Ks 0.000000 0.000000 0.000000

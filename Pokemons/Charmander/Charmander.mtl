@@ -1,7 +1,7 @@
 # Blender MTL File: 'None'
 # Material Count: 2
 
-newmtl mat_0
+newmtl mat_0.007
 Ns 92.156863
 Ka 0.000000 0.000000 0.000000
 Kd 0.800000 0.800000 0.800000
@@ -13,7 +13,7 @@ illum 2
 map_Kd Textures\hitokage_0_0.png
 map_d Textures\\hitokage_0_0.png
 
-newmtl mat_1
+newmtl mat_1.007
 Ns 92.156863
 Ka 0.000000 0.000000 0.000000
 Kd 0.800000 0.800000 0.800000
