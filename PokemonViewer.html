@@ -1,259 +1,289 @@
+<!-- webgl_multiple_views -->
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>three.js webgl - OBJLoader + MTLLoader</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-        <style>
-            body {
-                /*background-color: black;*/
-                margin-left: 0;
-                padding-left: 0;
-            }
-        </style>
-    </head>
-
-    <body>
-        <script src="js/libs/three.js"></script>
-
-        <script src="js/loaders/DDSLoader.js"></script>
-        <script src="js/loaders/MTLLoader.js"></script>
-        <script src="js/loaders/OBJLoader.js"></script>
-        <!-- <script src="js/libs/stats.js"></script> -->
-
-        <script>
-
-            var container;
-
-            var camera, scene, renderer, mainScene, mainCamera;
-
-            // var stats, lastTime=0, now;
-
-            var mouseX = 0, mouseY = 0;
-
-            var windowHalfX = window.innerWidth / 2;
-            var windowHalfY = window.innerHeight / 2;
-            var windowWidth, windowHeight;
-
-            var cameraDistance_y = 4;
-            var cameraDistance_xz = 7;
-            var cameraLookPos = new THREE.Vector3(0,3,0);
-
-            //lenght is 4  in this program(front, right, back and left view)
-            var renderTarget = [];
-            var planeMat = [];
-            var texSize = 150;
-            var attachTextureGeometry = [];
-            var mainMeshes = [];
-            var obj;
-
-            var views = [
-                {
-                    eye: [ 0, cameraDistance_y, cameraDistance_xz ],
-                    up: [ 0, 1, 0 ],
-                    fov: 45,                    
-                },
-                {
-                    eye: [ cameraDistance_xz, cameraDistance_y, 0 ],
-                    up: [ 0, 1, 0 ],
-                    fov: 45,
-                },
-                {
-                    eye: [ 0, cameraDistance_y, -cameraDistance_xz ],
-                    up: [ 0, 1, 0 ],
-                    fov: 45,
-                },
-                {
-                    eye: [ -cameraDistance_xz, cameraDistance_y, 0 ],
-                    up: [ 0, 1, 0 ],
-                    fov: 45,                    
-                }
-            ];
-
-            init();
-            animate();
+	<head>
+		<title>Pokemon 3d Viewer</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body{
+		    margin-left: 0;
+		    padding-left: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<p>ポケモン:
+			<form name ="PokemonList">
+				<select name="PokemonName" onchange="setPokemon()">
+					<option value="Pikachu" selected="">ピカチュウ</option>
+					<option value="Charmander">ヒトカゲ</option>				
+				</select>
+			</form>
+		</p>
 
 
-            function init() {
+		<div id="container"></div>
+		<script src="js/libs/three.js"></script>
+		<script src="js/libs/stats.js"></script>
+		<script src="js/loaders/DDSLoader.js"></script>
+      <script src="js/loaders/MTLLoader.js"></script>
+      <script src="js/loaders/OBJLoader.js"></script>
+      
 
-                // container = document.createElement( 'div' );
-                // document.body.appendChild( container );
+		<script src="js/Detector.js"></script>
 
-                //culculate the size of maximum square
-                var size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
-                windowWidth  = size;
-                windowHeight = size;
+		<script>
 
-                // scene
-                scene = new THREE.Scene();
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
-                for (var ii =  0; ii < views.length; ++ii ) {
-                    var view = views[ii];
-                    camera = new THREE.PerspectiveCamera( view.fov, windowWidth / windowHeight, 1, 100);
-                    camera.position.x = view.eye[ 0 ];
-                    camera.position.y = view.eye[ 1 ];
-                    camera.position.z = view.eye[ 2 ];
-                    camera.up.x = view.up[ 0 ];
-                    camera.up.y = view.up[ 1 ];
-                    camera.up.z = view.up[ 2 ];
-                    camera.aspect = windowWidth / windowHeight;
-                    camera.lookAt(cameraLookPos);
-                    view.camera = camera;
-                }
+			var container, stats;
 
-                //light
+			var views, scene, renderer;
+			var texSize;
+			var size,windowWidth, windowHeight;
 
-                var ambient = new THREE.AmbientLight( 0x444444 );
-                scene.add( ambient );
+			var cameraDistance_y = 4;
+         var cameraDistance_xz = 7;
+         var cameraLookPos = new THREE.Vector3(0,3,0);
 
-                var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-                directionalLight.position.set( 0, 1, 1 ).normalize();
-                scene.add( directionalLight );
+         var obj;
+         var percentComplete=0;
+         var flag = 0;
 
+         var imageCamera
 
-                var directionalLight2 = new THREE.DirectionalLight( 0xffeedd );
-                directionalLight2.position.set( 0, 1, -1 ).normalize();
-                scene.add( directionalLight2 );
+         var pokemon, directory
 
-                // model
+			var views = [
+				{
+					left: 0.333,
+					bottom: 0.0,
+					width: 0.333,
+					height: 0.333,
+					background: new THREE.Color().setRGB( 0.5, 0.5, 0.7 ),
+					eye: [ 0, cameraDistance_y, cameraDistance_xz ],
+					up: [ 0, -1, 0 ],
+					fov: 45,					
+				},
+				{
+					left: 0.666,
+					bottom: 0.333,
+					width: 0.333,
+					height: 0.333,
+					background: new THREE.Color().setRGB( 0.5, 0.7, 0.7 ),
+					eye: [ -cameraDistance_xz, cameraDistance_y, 0 ],
+					up: [ 0, 0, -1 ],
+					fov: 45,
+				},
+				{
+					left: 0.333,
+					bottom: 0.666,
+					width: 0.333,
+					height: 0.333,
+					background: new THREE.Color().setRGB( 0.7, 0.5, 0.5 ),
+					eye: [ 0, cameraDistance_y, -cameraDistance_xz],
+					up: [ 0, 1, 0 ],
+					fov: 45,
+				},
+				{
+					left: 0,
+					bottom: 0.333,
+					width: 0.333,
+					height: 0.333,
+					background: new THREE.Color().setRGB( 0.5, 0.5, 0.7 ),
+					eye: [ cameraDistance_xz, cameraDistance_y, 0],
+					up: [ 0, 0, -1 ],
+					fov: 45,					
+				}
+			];
 
-                var onProgress = function ( xhr ) {
-                    if ( xhr.lengthComputable ) {
-                        var percentComplete = xhr.loaded / xhr.total * 100;
-                        console.log( Math.round(percentComplete, 2) + '% downloaded' );
-                    }
-                };
+			//setting for stop animation
+			var animation_ID;
+			window.cancelAnimationFrame = (function() {
+			  return window.cancelAnimationFrame ||
+			         window.cancelRequestAnimationFrame ||
+			         window.webkitCancelAnimationFrame ||
+			         window.webkitCancelRequestAnimationFrame ||
+			         window.mozCancelAnimationFrame ||
+			         window.mozCancelRequestAnimationFrame ||
+			         window.msCancelAnimationFrame ||
+			         window.msCancelRequestAnimationFrame ||
+			         window.oCancelAnimationFrame ||
+			         window.oCancelRequestAnimationFrame ||
+			         function(id) { window.clearTimeout(id); };
+			}());
 
-                var onError = function ( xhr ) { };
+			window.onload = function() {
+				renderInit();
+				setPokemon();
+				animate();
+			}
+			//main function end
+			//below are functions used above
 
-                THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+			function renderInit() {				
+				container = document.getElementById( 'container' );
+				size = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth;
+				windowWidth  = size;
+				windowHeight = size;
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( windowWidth, windowHeight );
+				container.appendChild( renderer.domElement );
+			}
 
-                var mtlLoader = new THREE.MTLLoader();
-                mtlLoader.setPath( 'Pikachu/' );
-                mtlLoader.load( 'Pikachu.mtl', function( materials ) {
+			//init function is called by setPokemon()
+			function init() {
 
-                    materials.preload();
+				scene = new THREE.Scene();
 
-                    var objLoader = new THREE.OBJLoader();
-                    objLoader.setMaterials( materials );
-                    objLoader.setPath( 'Pikachu/' );
-                    objLoader.load( 'Pikachu.obj', function ( object ) {
-                        obj = object;
-                        obj.position.y = 0;
-                        scene.add( obj );
+				texSize = size / 3;
 
-                    }, onProgress, onError );
-                    // console.log(objLoader);
+				for (var ii =  0; ii < views.length; ++ii ) {
 
-                });
+					var view = views[ii];
+					camera = new THREE.PerspectiveCamera( view.fov, windowWidth / windowHeight, 1, 100 );
+					camera.position.x = view.eye[ 0 ];
+					camera.position.y = view.eye[ 1 ];
+					camera.position.z = view.eye[ 2 ];
+					camera.up.x = view.up[ 0 ];
+					camera.up.y = view.up[ 1 ];
+					camera.up.z = view.up[ 2 ];
+					camera.aspect = windowWidth / windowHeight;
+					camera.lookAt(cameraLookPos);
+					view.camera = camera;
 
-                //
+				}
 
-                renderer = new THREE.WebGLRenderer();
-                renderer.setPixelRatio( window.devicePixelRatio );
-                renderer.setSize( windowWidth, windowHeight );
-                // container.appendChild( renderer.domElement );
-                document.body.appendChild( renderer.domElement );
+				
+	          var ambient = new THREE.AmbientLight( 0x444444 );
+	          scene.add( ambient );
 
+	          var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+	          directionalLight.position.set( 0, 3, 3 );
+	          scene.add( directionalLight );
 
-                //ivent listener
-                document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+	          // var directionalLight2 = new THREE.DirectionalLight( 0xffeedd );
+	          // directionalLight2.position.set( 0, 0, -4 );
+	          // scene.add( directionalLight2 );
 
+ 	          var directionalLight3 = new THREE.DirectionalLight( 0xffeedd );
+	          directionalLight3.position.set( 3, 3, 0 ).normalize();
+	          scene.add( directionalLight3 );
 
-                //setting of texxture rendering
-                for (var i = 0; i < views.length; i++) {
-                    renderTarget[i] = new THREE.WebGLRenderTarget(texSize, texSize, {
-                         magFilter: THREE.NearestFilter,
-                         minFilter: THREE.NearestFilter,
-                         wrapS: THREE.ClampToEdgeWrapping,
-                         wrapT: THREE.ClampToEdgeWrapping
-                    });
-
-                    planeMat[i] = new THREE.MeshLambertMaterial({
-                        color: 0xffffff,
-                        map: renderTarget[i]                    
-                    });
-
-                    attachTextureGeometry[i] = new THREE.PlaneGeometry(texSize, texSize, 1, 1);
-
-                    mainMeshes[i] = new THREE.Mesh(attachTextureGeometry[i], planeMat[i]);
-                }
-
-                //main rendering
-                mainScene = new THREE.Scene();
-
-                mainCamera = new THREE.OrthographicCamera(-texSize*3/2, texSize*3/2, texSize*3/2, -texSize*3/2, 1, 2);
-                mainCamera.position.set(0, 1, 0);
-                mainCamera.up.x = 0;
-                mainCamera.up.y = 0;
-                mainCamera.up.z = -1;
-                mainCamera.lookAt(mainScene.position);
-                // camera.lookAt(mainScene.position);
-
-                mainMeshes[0].position.set(0, 0, texSize);
-                mainMeshes[1].position.set(texSize, 0, 0);
-                mainMeshes[2].position.set(0, 0, -texSize);
-                mainMeshes[3].position.set(-texSize, 0, 0);
-
-
-                for (var i = 0; i < views.length; i++) {
-                    
-                    mainMeshes[i].rotation.x = Math.PI / -2;
-                    mainScene.add(mainMeshes[i]);
-                }
-
-                mainMeshes[1].rotation.z = Math.PI / 2;
-                mainMeshes[2].rotation.z = Math.PI;
-                mainMeshes[3].rotation.z = Math.PI / -2;
-
-                
-                var mainLight = new THREE.DirectionalLight( 0xffffff);
-                mainLight.position.set( 0, 50, 0);
-                mainLight.target.position.copy( mainScene.position );
-
-                mainScene.add(mainLight);
-
-                // stats = new Stats();
-
-
-            }
-
-            function onDocumentMouseMove( event ) {
-
-                mouseX = ( event.clientX - windowHalfX ) / 2;
-                mouseY = ( event.clientY - windowHalfY ) / 2;
-
-            }
-
-            //
-
-            function animate() {
-
-                requestAnimationFrame( animate );
-                renderToTexture();
-                renderer.render(mainScene, mainCamera);
-
-            }
-
-            function renderToTexture() {
-                // stats.update();
-                // var fps = stats.getFps();
-                // console.log(fps);
-                // if (fps != 0) obj.rotation.y += 2*Math.PI/30 / fps;
-                // console.log(obj.rotation.y);                
-                for ( var ii = 0; ii < views.length; ++ii ) {
-                    view = views[ii];
-                    camera = view.camera;
-                    // camera.position.x += ( mouseX - camera.position.x ) * .05;
-                    // camera.position.y += ( - mouseY - camera.position.y ) * .05;
-                    // camera.lookAt( scene.position);
-                    mainMeshes[ii].material.needsUpdate = true;
-                    renderer.render( scene, camera, renderTarget[ii] );   
-                }
-            }
+	          var directionalLight4 = new THREE.DirectionalLight( 0xffeedd );
+	          directionalLight4.position.set( -3, 3, 0 ).normalize();
+	          scene.add( directionalLight4 );
 
 
-        </script>
+	          // model
 
-    </body>
+	          var onProgress = function ( xhr ) {
+	              if ( xhr.lengthComputable ) {
+	                  percentComplete = xhr.loaded / xhr.total * 100;
+	                  console.log( Math.round(percentComplete, 2) + '% downloaded' );
+	              }
+	          };
+
+	          var onError = function ( xhr ) { };
+
+	          THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+
+	          var mtlLoader = new THREE.MTLLoader();
+	          mtlLoader.setPath( directory );
+	          mtlLoader.load( pokemon+'.mtl', function( materials ) {
+
+	              materials.preload();
+
+	              var objLoader = new THREE.OBJLoader();
+	              objLoader.setMaterials( materials );
+	              objLoader.setPath( directory );
+	              objLoader.load( pokemon + '.obj', function ( object ) {
+	                  obj = object;
+	                  obj.position.y = 0;
+	                  scene.add( obj );
+	                  // console.log(obj);
+	              }, onProgress, onError );
+
+	          });
+
+
+	          stats = new Stats();
+
+	          //draw image once at center 
+    			var imageGeometry = new THREE.PlaneGeometry(texSize, texSize);
+    			var loader = new THREE.TextureLoader();
+    			var texture = loader.load('image/monster_ball.png');
+	         var imageMaterial = new THREE.MeshBasicMaterial( { map: texture } );
+	         var imageMesh = new THREE.Mesh(imageGeometry, imageMaterial);
+	         imageMesh.position.z = - 100;
+	         scene.add(imageMesh);
+	          var imageLight = new THREE.DirectionalLight( 0xffeedd );
+	          imageLight.position.set( 0, 0, -50 ).normalize();
+	          imageLight.target.position.set(imageMesh.position);
+	          scene.add( imageLight );
+	         imageCamera = new THREE.OrthographicCamera(-texSize/2,texSize/2,texSize/2,-texSize/2,1,100);
+	         imageCamera.position.z = -50;
+	         imageCamera.lookAt(imageMesh.position);	          
+			}
+
+			function animate() {
+				stats.update();
+				var fps = stats.getFps();				
+				if (obj != null) {
+					// console.log(obj);
+					flag = 1;	
+				}
+		
+				// if (Math.round(percentComplete, 2) == 100)  obj.rotation.y += 2*Math.PI/30 / fps;
+				if (flag == 1) {
+					if (fps > 5) obj.rotation.y += 2*Math.PI/30 / fps;
+					// console.log(obj.rotation.y);
+				}
+				render();
+
+				animation_ID = requestAnimationFrame( animate );
+			}
+
+			function render() {
+				var tuning = 0.7	;
+				renderer.setViewport( windowWidth/2 - texSize/2*tuning, windowHeight/2 - texSize/2*tuning, texSize*tuning, texSize*tuning );
+				renderer.setScissor( windowWidth/2 - texSize/2*tuning, windowHeight/2 - texSize/2
+					*tuning, texSize*tuning, texSize*tuning );
+				renderer.setScissorTest( true );
+				renderer.render( scene, imageCamera );
+				
+				for ( var ii = 0; ii < views.length; ++ii ) {
+					view = views[ii];
+					camera = view.camera;
+
+					// camera.lookAt( scene.position );
+
+					var left   = Math.floor( windowWidth  * view.left );	
+					var bottom = Math.floor( windowHeight * view.bottom );
+					var width  = Math.floor( windowWidth  * view.width );
+					var height = Math.floor( windowHeight * view.height );
+					renderer.setViewport( left, bottom, width, height );
+					renderer.setScissor( left, bottom, width, height );
+					renderer.setScissorTest( true );
+					// renderer.setClearColor( view.background );
+
+					renderer.render( scene, camera );
+					
+				}
+
+			}
+
+			function setPokemon() {
+				pokemon = document.PokemonList.PokemonName.value;
+				directory = "Pokemons/" + pokemon + "/";
+				cancelAnimationFrame(animation_ID);
+				init();
+				animate()
+			}
+
+		</script>
+
+	</body>
 </html>
